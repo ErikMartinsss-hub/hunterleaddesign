@@ -116,15 +116,24 @@ function App() {
           signal: controller.signal,
         }
 
-        let response: Response
-        try {
-          response = await fetch(`${API_BASE}/api/search/live`, requestOptions)
-        } catch (error) {
-          if (controller.signal.aborted) throw error
-          response = await fetch(`${TUNNEL_API_BASE}/api/search/live`, requestOptions)
+        let response: Response | null = null
+
+        if (API_BASE !== TUNNEL_API_BASE) {
+          const primaryController = new AbortController()
+          const primaryTimeoutId = window.setTimeout(() => primaryController.abort(), 12000)
+          try {
+            response = await fetch(`${API_BASE}/api/search/live`, {
+              ...requestOptions,
+              signal: primaryController.signal,
+            })
+          } catch (error) {
+            if (controller.signal.aborted) throw error
+          } finally {
+            window.clearTimeout(primaryTimeoutId)
+          }
         }
 
-        if (!response.ok && API_BASE !== TUNNEL_API_BASE) {
+        if (!response || !response.ok) {
           response = await fetch(`${TUNNEL_API_BASE}/api/search/live`, requestOptions)
         }
 
