@@ -1,67 +1,64 @@
 # Design Hunter Lead
 
-Dark futuristic SaaS interface for finding local business leads from Google Maps.
-The app searches a niche and location, collects real business profiles, then helps
-create a WhatsApp pitch for businesses without a website or active Instagram link.
+Interface SaaS dark futurista para encontrar leads locais no Google Maps.
+Backend e frontend ficam juntos neste repositório.
 
-## Structure
+## Estrutura
 
-- `backend/` — Express API, SQLite legacy endpoints, and live Google Maps scraper.
-- `hunter-lead/` — React + TypeScript + Tailwind + Vite frontend.
+- `backend/` — API Express, endpoints SQLite legados e scraper real do Google Maps.
+- `hunter-lead/` — frontend React + TypeScript + Tailwind + Vite.
 
-## Run locally
+## Rodar tudo junto
 
-Requires Node.js 18+ and Google Chrome installed.
+Requisitos: Node.js 18+ e Google Chrome instalado.
 
-```bash
-cd backend
-npm install
-node index.js
-```
-
-In another terminal:
+Na raiz do repositório:
 
 ```bash
-cd hunter-lead
 npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`.
+`npm install` instala dependências da raiz, do backend e do frontend.
+`npm run dev` inicia os dois processos:
 
-The Vite dev server proxies `/api` to `http://localhost:4000`.
+- API: `http://localhost:4000`
+- Frontend: `http://localhost:5173`
 
-## Live search
+O Vite usa proxy de `/api` para `http://localhost:4000`.
 
-`POST /api/search/live` searches Google Maps through `playwright-core`.
-No paid API key is required. Chrome is auto-detected at the default Windows path.
-Set `CHROME_PATH` if Chrome is installed elsewhere:
+## Comandos da raiz
 
 ```bash
-CHROME_PATH="/path/to/chrome" node index.js
+npm run dev      # backend + frontend
+npm start        # só backend
+npm run build    # build do frontend
+npm run lint     # lint do frontend
 ```
 
-On Windows PowerShell:
+## Busca real
+
+`POST /api/search/live` consulta o Google Maps via `playwright-core`.
+Não usa API key paga. O Chrome é detectado no caminho padrão do Windows.
+Se estiver em outro caminho, defina `CHROME_PATH`.
+
+Windows PowerShell:
 
 ```powershell
 $env:CHROME_PATH = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-node index.js
+npm run dev
 ```
 
-Results are cached in memory for 10 minutes. One live scrape runs at a time.
-Google Maps scraping can violate Google's terms. Use this project responsibly and
-respect applicable laws, rate limits, and website terms.
-
-## Frontend scripts
+Linux/macOS:
 
 ```bash
-cd hunter-lead
-npm run dev
-npm run build
-npm run lint
+CHROME_PATH="/path/to/chrome" npm run dev
 ```
 
-## AI assets
+Resultados ficam em cache por 10 minutos. Apenas uma busca real rola por vez.
+Scraping do Google Maps pode violar termos de uso. Use com responsabilidade.
 
-Generated local cinematic assets are documented in `hunter-lead/AI_ASSETS.md`
-and stored in `hunter-lead/public/assets/`.
+## Assets de IA
+
+Assets cinematográficos gerados localmente estão documentados em
+`hunter-lead/AI_ASSETS.md` e salvos em `hunter-lead/public/assets/`.
