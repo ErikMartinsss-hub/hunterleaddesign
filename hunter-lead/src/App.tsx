@@ -47,6 +47,7 @@ const RESULT_LIMIT = 24
 const MAX_RESULTS = 48
 const SCAN_MS = 1200
 const API_BASE = String(import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+const TUNNEL_API_BASE = 'https://interested-therapy-forget-salvador.trycloudflare.com'
 
 const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
 
@@ -108,12 +109,25 @@ function App() {
       setResultLimit(limit)
 
       try {
-        const response = await fetch(`${API_BASE}/api/search/live`, {
+        const requestOptions: RequestInit = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ niche, location, limit }),
           signal: controller.signal,
-        })
+        }
+
+        let response: Response
+        try {
+          response = await fetch(`${API_BASE}/api/search/live`, requestOptions)
+        } catch (error) {
+          if (controller.signal.aborted) throw error
+          response = await fetch(`${TUNNEL_API_BASE}/api/search/live`, requestOptions)
+        }
+
+        if (!response.ok && API_BASE !== TUNNEL_API_BASE) {
+          response = await fetch(`${TUNNEL_API_BASE}/api/search/live`, requestOptions)
+        }
+
         const data: LiveResponse = await response.json().catch(() => ({}))
         if (!response.ok) throw new Error(data.error || `Falha na busca (${response.status}).`)
 
