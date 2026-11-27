@@ -46,6 +46,7 @@ type LiveResponse = {
 const RESULT_LIMIT = 24
 const MAX_RESULTS = 48
 const SCAN_MS = 1200
+const API_BASE = String(import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 
 const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
 
@@ -107,7 +108,7 @@ function App() {
       setResultLimit(limit)
 
       try {
-        const response = await fetch('/api/search/live', {
+        const response = await fetch(`${API_BASE}/api/search/live`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ niche, location, limit }),

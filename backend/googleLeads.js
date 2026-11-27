@@ -4,6 +4,14 @@ const { chromium } = require('playwright-core');
 const CHROME =
   process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
+const LAUNCH_ARGS = [
+  '--disable-blink-features=AutomationControlled',
+  '--lang=pt-BR',
+  ...(process.env.PLAYWRIGHT_NO_SANDBOX === '1'
+    ? ['--no-sandbox', '--disable-dev-shm-usage']
+    : []),
+];
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const clean = (value) => String(value || '').replace(/\s+/g, ' ').trim();
@@ -205,7 +213,7 @@ async function searchGoogleLeads({ niche, location, limit = 24, timeoutMs = 7500
     browser = await chromium.launch({
       executablePath: CHROME,
       headless: true,
-      args: ['--disable-blink-features=AutomationControlled', '--lang=pt-BR'],
+      args: LAUNCH_ARGS,
     });
 
     const context = await browser.newContext({

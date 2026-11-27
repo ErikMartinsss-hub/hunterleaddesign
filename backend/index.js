@@ -13,6 +13,10 @@ app.use(cors());
 app.use(bodyParser.json());
 bodyParser.urlencoded({ extended: true });
 
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
 // Database setup
 const db = new sqlite3.Database(path.join(__dirname, 'leads.db'), (err) => {
   if (err) {

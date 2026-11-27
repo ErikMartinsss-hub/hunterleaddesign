@@ -27,6 +27,27 @@ npm run dev
 
 O Vite usa proxy de `/api` para `http://localhost:4000`.
 
+## Deploy
+
+O frontend pode ser publicado na Vercel. O backend precisa de um host com
+processo contínuo e Chrome instalado, como Railway, Render ou VPS. Vercel não
+roda o scraper do Google Maps de forma confiável.
+
+Para apontar o frontend publicado para um backend externo, defina:
+
+```bash
+VITE_API_URL=https://seu-backend.exemplo.com
+```
+
+No Vercel, adicione `VITE_API_URL` em Project Settings → Environment Variables.
+Sem essa variável, o frontend usa `/api`, que funciona só com o proxy local.
+
+Endpoint de saúde do backend:
+
+```text
+GET /health
+```
+
 ## Comandos da raiz
 
 ```bash
