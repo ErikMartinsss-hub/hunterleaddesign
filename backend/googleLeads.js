@@ -6,6 +6,11 @@ const CHROME =
 
 const LAUNCH_ARGS = [
   '--disable-blink-features=AutomationControlled',
+  '--disable-background-networking',
+  '--disable-extensions',
+  '--disable-gpu',
+  '--disable-software-rasterizer',
+  '--blink-settings=imagesEnabled=false',
   '--lang=pt-BR',
   ...(process.env.PLAYWRIGHT_NO_SANDBOX === '1'
     ? ['--no-sandbox', '--disable-dev-shm-usage']
@@ -218,11 +223,17 @@ async function searchGoogleLeads({ niche, location, limit = 24, timeoutMs = 7500
 
     const context = await browser.newContext({
       locale: 'pt-BR',
-      viewport: { width: 1440, height: 900 },
+      viewport: { width: 1024, height: 768 },
+      deviceScaleFactor: 1,
       userAgent:
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
     });
     const page = await context.newPage();
+    await page.route('**/*', (route) => {
+      const type = route.request().resourceType();
+      if (['image', 'font', 'media'].includes(type)) return route.abort();
+      return route.continue();
+    });
     page.setDefaultTimeout(15000);
     page.setDefaultNavigationTimeout(20000);
 
